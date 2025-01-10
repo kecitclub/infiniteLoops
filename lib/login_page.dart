@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:swasthasewa_final/symptoms_page.dart';
 import 'package:swasthasewa_final/signup_page.dart';
 import 'package:swasthasewa_final/admin_page.dart';
+import 'package:swasthasewa_final/home_page.dart';
 
 class Login extends StatelessWidget {
   @override
@@ -68,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
             } else {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const SymptomsPage()),
+                MaterialPageRoute(builder: (context) => const HomePage()),
               );
             }
           }

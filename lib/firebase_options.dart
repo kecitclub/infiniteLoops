@@ -5,12 +5,12 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     return const FirebaseOptions(
-      apiKey: 'YOUR-ACTUAL-API-KEY',
-      appId: 'YOUR-ACTUAL-APP-ID',
-      messagingSenderId: 'YOUR-ACTUAL-SENDER-ID',
-      projectId: 'YOUR-ACTUAL-PROJECT-ID',
-      databaseURL: 'YOUR-DATABASE-URL',
-      storageBucket: 'YOUR-ACTUAL-BUCKET',
+      apiKey: 'AIzaSCmdfwa9BPUC6xeNFd0KPXOGClqOysDl3cy',
+      appId: '1:278079399793:android:adc962ee33807cd7f878d0',
+      messagingSenderId: '278079399793',
+      projectId: 'swasthasewa-final',
+      databaseURL: 'https://swasthasewa-final-default-rtdb.firebaseio.com',
+      storageBucket: 'swasthasewa-final.appspot.com',
     );
   }
 } 

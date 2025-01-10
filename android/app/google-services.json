@@ -1,14 +1,33 @@
 {
   "project_info": {
-    "project_number": "442903387493",
-    "firebase_url": "https://swasthasewa1-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "swasthasewa1",
-    "storage_bucket": "swasthasewa1.firebasestorage.app"
+    "project_number": "278079399793",
+    "firebase_url": "https://swasthasewa-4a8a3-default-rtdb.firebaseio.com",
+    "project_id": "swasthasewa-4a8a3",
+    "storage_bucket": "swasthasewa-4a8a3.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:442903387493:android:f6c0564b6c713bc289158c",
+        "mobilesdk_app_id": "1:278079399793:android:adc962ee33807cd7f878d0",
+        "android_client_info": {
+          "package_name": "com.example.swasthasewa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSCmdfwa9BPUC6xeNFd0KPXOGClqOysDl3c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:278079399793:android:a03395e9279756aef878d0",
         "android_client_info": {
           "package_name": "com.example.swasthasewa_final"
         }
@@ -16,7 +35,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAV4JraIP2jvFDXV4PYbRFs79cxpDn6mc4"
+          "current_key": "AIzaSyCmdfwa9BPUC6xeNFd0KPXOGClqOysDl3c"
         }
       ],
       "services": {
