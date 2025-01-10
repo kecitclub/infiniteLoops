@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:swasthasewa_final/symptoms_page.dart';
 import 'package:swasthasewa_final/signup_page.dart';
+import 'package:swasthasewa_final/admin_page.dart';
 
 class Login extends StatelessWidget {
   @override
@@ -21,91 +23,153 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isLoading = false;
 
-  void _login() async {
-    String username = _usernameController.text;
-    String password = _passwordController.text;
+  Future<void> _login() async {
+    setState(() => _isLoading = true);
 
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-
-    // Firebase Authentication logic to log in with email/password
     try {
       // Attempt login
-      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: username,
-        password: password,
+      final UserCredential userCredential = 
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _usernameController.text.trim(),
+        password: _passwordController.text,
       );
 
-      // If successful, show success message
       if (userCredential.user != null) {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>SymptomsPage()));
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login Successful!')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Invalid Username or Password!')),
-        );
+        // Get user role from database
+        final DatabaseReference databaseRef = FirebaseDatabase.instance.ref();
+        final DataSnapshot snapshot = await databaseRef
+            .child('users')
+            .child(userCredential.user!.uid)
+            .get();
+
+        if (snapshot.exists) {
+          final Map<dynamic, dynamic> userData = 
+              snapshot.value as Map<dynamic, dynamic>;
+          
+          final String userRole = userData['role'] as String;
+
+          if (mounted) {
+            // Show success message
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Login Successful!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+
+            // Navigate based on role
+            if (userRole == 'admin') {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const AdminPage()),
+              );
+            } else {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const SymptomsPage()),
+              );
+            }
+          }
+        } else {
+          throw Exception('User data not found');
+        }
       }
     } on FirebaseAuthException catch (e) {
-      // If there's an error (e.g., wrong password or user does not exist), show the error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? 'Error during login')),
-      );
+      String message = 'An error occurred';
+      
+      if (e.code == 'user-not-found') {
+        message = 'No user found for that email';
+      } else if (e.code == 'wrong-password') {
+        message = 'Wrong password provided';
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login Page'),
-        backgroundColor: Colors.blue,
+        title: const Text('Login Page'),
+        backgroundColor: Theme.of(context).primaryColor,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(
-                labelText: 'Username',
-                border: OutlineInputBorder(),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextField(
+                    controller: _usernameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.email),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Password',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.lock),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        foregroundColor: Colors.white,
+                      ),
+                      onPressed: _login,
+                      child: const Text(
+                        'Login',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SignupPage()),
+                      );
+                    },
+                    child: const Text("Don't have an account? Sign up"),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _login,
-              child: Text('Login'),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.blue),
-                padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 14, horizontal: 50)),
-                textStyle: MaterialStateProperty.all(TextStyle(fontSize: 18)),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SignupPage()),
-                );
-              },
-              child: const Text("Don't have an account? Sign up"),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
