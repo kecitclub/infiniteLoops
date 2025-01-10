@@ -8,9 +8,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    await Firebase.initializeApp();
+    // Initialize Firebase without options
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp();
+    }
 
-    // Optional: Enable database logging for debugging
     FirebaseDatabase.instance.setLoggingEnabled(true);
 
     print("Firebase initialized successfully");
