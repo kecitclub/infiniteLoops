@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'symptoms_page.dart';
 import 'package:swasthasewa_final/login_page.dart';
-
+import 'doctor_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -32,7 +32,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: Login(),
+       home: Login(),
+      //home:const RecordsPage(),
     );
   }
 }
