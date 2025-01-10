@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -15,9 +14,6 @@ class _SignupPageState extends State<SignupPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _nameController = TextEditingController();
-  final _ageController = TextEditingController();
-  final _sexController = TextEditingController();
-  final _phoneNumber = TextEditingController();
   bool _isLoading = false;
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
@@ -28,9 +24,6 @@ class _SignupPageState extends State<SignupPage> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _nameController.dispose();
-    _ageController.dispose();
-    _sexController.dispose();
-    _phoneNumber.dispose();
     super.dispose();
   }
 
@@ -46,27 +39,6 @@ class _SignupPageState extends State<SignupPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
-
-      // Get the user ID from the authenticated user
-      final String uid = userCredential.user!.uid;
-
-      // Create a reference to the Firebase Database
-      final DatabaseReference databaseRef = FirebaseDatabase.instance.ref();
-      
-      // Create user data map
-      final Map<String, dynamic> userData = {
-        'uid': uid,
-        'fullName': _nameController.text,
-        'email': _emailController.text.trim(),
-        'age': _ageController.text,
-        'sex': _sexController.text,
-        'phoneNumber': _phoneNumber.text,
-        'registrationDate': ServerValue.timestamp,
-        'role': 'user',
-      };
-
-      // Store user data in the database under 'users' node
-      await databaseRef.child('users').child(uid).set(userData);
 
       if (mounted) {
         // Show success message
@@ -100,7 +72,6 @@ class _SignupPageState extends State<SignupPage> {
         );
       }
     } catch (e) {
-      print('Error details: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -162,51 +133,6 @@ class _SignupPageState extends State<SignupPage> {
                         }
                         if (!value.contains('@')) {
                           return 'Please enter a valid email';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _sexController,
-                      decoration: const InputDecoration(
-                        labelText: 'Sex',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.person),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your sex';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _ageController,
-                      decoration: const InputDecoration(
-                        labelText: 'Age',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.person),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your Age';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _phoneNumber,
-                      decoration: const InputDecoration(
-                        labelText: 'Phone Number',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.phone),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your Phone Number';
                         }
                         return null;
                       },

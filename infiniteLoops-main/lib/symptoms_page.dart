@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:swasthasewa_final/doctor_info.dart';
 
 class SymptomsPage extends StatefulWidget {
   const SymptomsPage({super.key});
@@ -235,11 +234,6 @@ class _SymptomsPageState extends State<SymptomsPage> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 10),
-                    ElevatedButton(
-                        onPressed: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>DoctorInfo()));                        },
-                        child: Text('Doctor Page'))
                   ],
                 ),
               ),
