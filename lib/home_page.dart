@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:swasthasewa_final/symptoms_page.dart';
 import 'package:swasthasewa_final/nearest_health_post.dart';
+import 'package:swasthasewa_final/general_inquiry.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -257,7 +258,7 @@ class _HomePageState extends State<HomePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const NearestHealthPost(),
+                                    builder: (context) => const GeneralInquiryPage(),
                                   ),
                                 );
                               },
