@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:swasthasewa_final/symptoms_page.dart';
 import 'package:swasthasewa_final/signup_page.dart';
 import 'package:swasthasewa_final/admin_page.dart';
@@ -26,13 +27,36 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
 
+  Future<Position?> _getCurrentLocation() async {
+    try {
+      // Check location permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        print(permission);
+        if (permission == LocationPermission.denied) {
+          throw Exception('Location permissions are denied');
+        }
+      }
+
+      // Get current position
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      return position;
+    } catch (e) {
+      print('Error getting location: $e');
+      return null;
+    }
+  }
+
   Future<void> _login() async {
     setState(() => _isLoading = true);
 
     try {
       // Attempt login
-      final UserCredential userCredential = 
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
+      final UserCredential userCredential =
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _usernameController.text.trim(),
         password: _passwordController.text,
       );
@@ -46,10 +70,25 @@ class _LoginPageState extends State<LoginPage> {
             .get();
 
         if (snapshot.exists) {
-          final Map<dynamic, dynamic> userData = 
-              snapshot.value as Map<dynamic, dynamic>;
-          
+          final Map<dynamic, dynamic> userData =
+          snapshot.value as Map<dynamic, dynamic>;
+
           final String userRole = userData['role'] as String;
+
+          // Get location after successful login
+          final Position? position = await _getCurrentLocation();
+          if (position != null) {
+            // Save location to database
+            await databaseRef.child('users')
+                .child(userCredential.user!.uid)
+                .update({
+              'lastLocation': {
+                'latitude': position.latitude,
+                'longitude': position.longitude,
+                'timestamp': ServerValue.timestamp,
+              }
+            });
+          }
 
           if (mounted) {
             // Show success message
@@ -79,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
       }
     } on FirebaseAuthException catch (e) {
       String message = 'An error occurred';
-      
+
       if (e.code == 'user-not-found') {
         message = 'No user found for that email';
       } else if (e.code == 'wrong-password') {
@@ -120,57 +159,57 @@ class _LoginPageState extends State<LoginPage> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextField(
-                    controller: _usernameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.email),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.lock),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        foregroundColor: Colors.white,
-                      ),
-                      onPressed: _login,
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const SignupPage()),
-                      );
-                    },
-                    child: const Text("Don't have an account? Sign up"),
-                  ),
-                ],
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(
+              controller: _usernameController,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.email),
               ),
             ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.lock),
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: _login,
+                child: const Text(
+                  'Login',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignupPage()),
+                );
+              },
+              child: const Text("Don't have an account? Sign up"),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

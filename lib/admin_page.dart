@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'doctor_page.dart';
 
 class AdminPage extends StatelessWidget {
   const AdminPage({super.key});
@@ -10,8 +11,23 @@ class AdminPage extends StatelessWidget {
         title: const Text('Admin Dashboard'),
         backgroundColor: Theme.of(context).primaryColor,
       ),
-      body: const Center(
-        child: Text('Welcome to Admin Dashboard'),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('Welcome to Admin Dashboard'),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const RecordsPage()),
+                );
+              },
+              child : const Text('Incoming Requests'),
+            ),
+          ],
+        ),
       ),
     );
   }

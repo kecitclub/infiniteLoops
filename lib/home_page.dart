@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:swasthasewa_final/symptoms_page.dart';
 import 'package:swasthasewa_final/nearest_health_post.dart';
+import 'package:swasthasewa_final/consult_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -263,6 +264,37 @@ class _HomePageState extends State<HomePage> {
                               },
                             ),
                           ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'chat with doc',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          ListTile(
+                            leading: const Icon(Icons.local_hospital),
+                            title: const Text('Chat'),
+                            subtitle: const Text('Communicate with doctor'),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.phone),
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>ConsultPage(userId: 'mSCtta79UmfPAujuVL6xg9h0DMy1' ,doctorId: 'ruQMvqMqJkS62Svi2hyhqKDzZJg1',)));
+                              },
+                            ),
+                          ),
+
                         ],
                       ),
                     ),
