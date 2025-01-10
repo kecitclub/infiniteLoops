@@ -3,16 +3,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'symptoms_page.dart';
 import 'package:swasthasewa_final/login_page.dart';
-import 'doctor_page.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    // Initialize Firebase without options
-    if (Firebase.apps.isEmpty) {
-      await Firebase.initializeApp();
-    }
+    await Firebase.initializeApp();
 
+    // Optional: Enable database logging for debugging
     FirebaseDatabase.instance.setLoggingEnabled(true);
 
     print("Firebase initialized successfully");
@@ -34,8 +32,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-       home: Login(),
-      //home:const RecordsPage(),
+      home: Login(),
     );
   }
 }
